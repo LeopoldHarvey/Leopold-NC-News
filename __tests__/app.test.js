@@ -7,15 +7,13 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 
 const data = require("../db/data/test-data/index.js");
-
+const endpoint = require('../endpoints.json')
 beforeEach(() => {
   return seed(data);
 });
-
 afterAll(() => {
   return db.end();
 });
-
 describe("/api/topics", () => {
   test("GET 200: Responds with an array of topic objects with slugs and descriptions", () => {
     return request(app)
@@ -38,12 +36,18 @@ describe("/api/topics", () => {
           },
         ]);
       });
-  });
-  // describe('invalid url error', () => {
-  //   test('should return correct error and message if invalid url used', () => {
-  //     .then((response) => {
-  //       expect(response.body.msg).toBe("Invalid url")
-  //     })
-  //   });
-  // });
+    });
 });
+describe("/api", () => {
+  test("GET: 200: responds with object containing all the ap endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((response) => {
+        const endpoints  = response.body;
+        expect(endpoints).toEqual({
+         endpoint
+        });
+      });
+    })
+  })
