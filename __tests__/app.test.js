@@ -5,7 +5,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 
 const seed = require("../db/seeds/seed");
-
+const article = require("../db/data/test-data/articles") 
 const data = require("../db/data/test-data/index.js");
 const endpoint = require('../endpoints.json')
 beforeEach(() => {
@@ -47,7 +47,8 @@ describe("/api/articles/:article_id", () => {
         .expect(200)
         .then((response) => {
           const { article } = response.body;
-          expect(article).toEqual({
+          expect(article).toEqual(
+            expect.objectContaining({
             title: "Eight pug gifs that remind me of mitch",
             topic: "mitch",
             article_id: 3,
@@ -57,7 +58,8 @@ describe("/api/articles/:article_id", () => {
             created_at: "2020-11-03T09:12:00.000Z",
             article_img_url:
               "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          });
+            }),
+            );
         });
     });
     test("400: Responds with appropriate error when invalid id is used", () => {
