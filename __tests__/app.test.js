@@ -7,6 +7,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 
 const data = require("../db/data/test-data/index.js");
+const endpoint = require('../endpoints.json')
 beforeEach(() => {
   return seed(data);
 });
@@ -35,7 +36,7 @@ describe("/api/topics", () => {
           },
         ]);
       });
-  });
+    });
 });
 
 describe("/api/articles/:article_id", () => {
@@ -69,7 +70,7 @@ describe("/api/articles/:article_id", () => {
     });
     test("404: Responds with appropriate error when non-existent id is used", () => {
       return request(app)
-        .get("/api/articles/1231212")
+        .get("/api/articles/9000")
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe("Article id does not exist");
@@ -77,3 +78,16 @@ describe("/api/articles/:article_id", () => {
     });
   })
 })
+describe("/api", () => {
+  test("GET: 200: responds with object containing all the ap endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((response) => {
+        const endpoints  = response.body;
+        expect(endpoints).toEqual({
+         endpoint
+        });
+      });
+    })
+  })
