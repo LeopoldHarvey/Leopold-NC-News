@@ -25,3 +25,22 @@ exports.selectArticles = () => {
       return rows;
     });
 };
+
+exports.selectArticleComments = (param_id) => {
+  return db.query(`
+  SELECT article_id FROM articles
+  WHERE article_id = $1
+  `, [param_id]).then(({rows}) => {
+    if (rows.length === 0) {
+      return Promise.reject({status: 404, msg: "article does not exist"})
+  }
+  return db.query(`
+      SELECT *
+      FROM comments
+      WHERE article_id = $1
+      ORDER BY created_at DESC
+  `, [param_id])
+}).then(({rows})=> {
+  return rows
+})
+}
