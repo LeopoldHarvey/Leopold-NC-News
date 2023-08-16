@@ -5,9 +5,9 @@ const request = require("supertest");
 const db = require("../db/connection");
 
 const seed = require("../db/seeds/seed");
-const article = require("../db/data/test-data/articles") 
+const article = require("../db/data/test-data/articles");
 const data = require("../db/data/test-data/index.js");
-const endpoint = require('../endpoints.json')
+const endpoint = require("../endpoints.json");
 beforeEach(() => {
   return seed(data);
 });
@@ -36,7 +36,7 @@ describe("/api/topics", () => {
           },
         ]);
       });
-    });
+  });
 });
 
 describe("/api/articles/:article_id", () => {
@@ -49,17 +49,17 @@ describe("/api/articles/:article_id", () => {
           const { article } = response.body;
           expect(article).toEqual(
             expect.objectContaining({
-            title: "Eight pug gifs that remind me of mitch",
-            topic: "mitch",
-            article_id: 3,
-            votes: 0,
-            author: "icellusedkars",
-            body: "some gifs",
-            created_at: "2020-11-03T09:12:00.000Z",
-            article_img_url:
-              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-            }),
-            );
+              title: "Eight pug gifs that remind me of mitch",
+              topic: "mitch",
+              article_id: 3,
+              votes: 0,
+              author: "icellusedkars",
+              body: "some gifs",
+              created_at: "2020-11-03T09:12:00.000Z",
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+          );
         });
     });
     test("400: Responds with appropriate error when invalid id is used", () => {
@@ -78,18 +78,49 @@ describe("/api/articles/:article_id", () => {
           expect(response.body.msg).toBe("Article id does not exist");
         });
     });
-  })
-})
+  });
+});
 describe("/api", () => {
-  test("GET: 200: responds with object containing all the ap endpoints", () => {
+  test("GET: 200: responds with object containing all the api endpoints", () => {
     return request(app)
       .get("/api")
       .expect(200)
       .then((response) => {
-        const endpoints  = response.body;
+        const endpoints = response.body;
         expect(endpoints).toEqual({
-         endpoint
+          endpoint,
         });
       });
-    })
+  });
+});
+
+
+describe("/api/articles", () => {
+  describe("GET", () => {
+    test("200: responds with array of articles with comment counts in descending date order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          const { articles } = response.body;
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+          expect(articles.length).toBe(13);
+          articles.forEach((article) => {
+            expect(article).toHaveProperty("author");
+            expect(article).toHaveProperty("title");
+            expect(article).toHaveProperty("topic");
+            expect(article).toHaveProperty("article_id");
+            expect(article).toHaveProperty("created_at");
+            expect(article).toHaveProperty("votes");
+            expect(article).toHaveProperty("article_img_url");
+            expect(article).toHaveProperty("comment_count");
+          });
+        });
+    });
+    test('GET 200   | Returns object ordered by date descending', () => {
+          return request(app).get('/api/articles').expect(200).then(({body}) => {
+              expect(body.articles).toBeSorted({key: "created_at", descending: true})
+          })
+      });
+      });
   })
