@@ -94,7 +94,6 @@ describe("/api", () => {
   });
 });
 
-
 describe("/api/articles", () => {
   describe("GET", () => {
     test("200: responds with array of articles with comment counts in descending date order", () => {
@@ -117,10 +116,64 @@ describe("/api/articles", () => {
           });
         });
     });
-    test('GET 200   | Returns object ordered by date descending', () => {
-          return request(app).get('/api/articles').expect(200).then(({body}) => {
-              expect(body.articles).toBeSorted({key: "created_at", descending: true})
-          })
+    test("GET 200   | Returns object ordered by date descending", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSorted({
+            key: "created_at",
+            descending: true,
+          });
+        });
+    });
+  });
+});
+
+describe("/api/articles/:article_id/comments", () => {
+  test("GET 200   | Return 200 and array with correct comment objects", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).not.toBe(0);
+        body.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id");
+          expect(comment).toHaveProperty("votes");
+          expect(comment).toHaveProperty("created_at");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("body");
+          expect(comment.article_id).toBe(3);
+        });
       });
+  });
+  test('GET 200   | Return empty array when given article_id with no comments', () => {
+    return request(app).get('/api/articles/2/comments').expect(200).then(({body}) => {
+        expect(body.length).toBe(0)
+    })
+});
+  test("GET 200   | Return the array ordered by most recent comments first", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeSortedBy("created_at", { descending: true });
       });
-  })
+  });
+  test("GET 404   | Return 400 and sends an appropriate error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/10000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("GET 400   | Return 400 and sends an appropriate error message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/three/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
