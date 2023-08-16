@@ -1,4 +1,4 @@
-const { selectArticleById } = require('../models/article.model')
+const { selectArticleById, selectArticles} = require('../models/article.model')
 
 exports.getArticleById = (request, response, next) => {
     const { article_id } = request.params;
@@ -9,4 +9,11 @@ exports.getArticleById = (request, response, next) => {
       .catch((error) => {
         next(error);
       });
+  };
+
+  exports.getArticles = (request, response, next) => {
+    selectArticles().then((articles) => {
+      console.log(articles)
+      response.status(200).send({ articles });
+    });
   };
