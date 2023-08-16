@@ -110,6 +110,10 @@ describe('/api/articles', () => {
           })
       })
   });
-
+  test('GET 200   | Returns object ordered by date descending', () => {
+    return request(app).get('/api/articles').expect(200).then(({body}) => {
+        expect(body.articles).toBeSorted({key: "created_at", descending: true})
+    })
+});
 });
 
