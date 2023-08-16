@@ -94,26 +94,33 @@ describe("/api", () => {
   });
 });
 
-describe('/api/articles', () => {
-  test('GET 200   | Returns 200 and an object of all articles with comment_count', () => {
-      return request(app).get('/api/articles').expect(200).then(({body}) => {
-          expect(body.articles.length).not.toBe(0)
-          body.articles.forEach(article => {
-              expect(article).toHaveProperty("author")
-              expect(article).toHaveProperty("title")
-              expect(article).toHaveProperty("body")
-              expect(article).toHaveProperty("topic")
-              expect(article).toHaveProperty("created_at")
-              expect(article).toHaveProperty("votes")
-              expect(article).toHaveProperty("article_img_url")
-              expect(article).toHaveProperty("comment_count")
-          })
-      })
-  });
-  test('GET 200   | Returns object ordered by date descending', () => {
-    return request(app).get('/api/articles').expect(200).then(({body}) => {
-        expect(body.articles).toBeSorted({key: "created_at", descending: true})
-    })
-});
-});
 
+describe("/api/articles", () => {
+  describe("GET", () => {
+    test("200: responds with array of articles with comment counts in descending date order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          const { articles } = response.body;
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+          expect(articles.length).toBe(13);
+          articles.forEach((article) => {
+            expect(article).toHaveProperty("author");
+            expect(article).toHaveProperty("title");
+            expect(article).toHaveProperty("topic");
+            expect(article).toHaveProperty("article_id");
+            expect(article).toHaveProperty("created_at");
+            expect(article).toHaveProperty("votes");
+            expect(article).toHaveProperty("article_img_url");
+            expect(article).toHaveProperty("comment_count");
+          });
+        });
+    });
+    test('GET 200   | Returns object ordered by date descending', () => {
+          return request(app).get('/api/articles').expect(200).then(({body}) => {
+              expect(body.articles).toBeSorted({key: "created_at", descending: true})
+          })
+      });
+      });
+  })
