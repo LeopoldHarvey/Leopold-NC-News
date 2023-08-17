@@ -56,3 +56,20 @@ exports.insertCommentByArticleId = (body, article_id) => {
       return rows[0];
     });
   };
+
+  exports.updateArticleVotesById = (body, article_id) => {
+    return db
+      .query(
+        `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *`,
+        [body.inc_votes, article_id]
+      )
+      .then(({ rows }) => {
+        if (!rows.length) {
+          return Promise.reject({
+            status: 404,
+            msg: "Article id does not exist",
+          });
+        }
+                return rows[0];
+      })
+    }
