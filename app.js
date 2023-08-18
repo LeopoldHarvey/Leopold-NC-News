@@ -4,7 +4,7 @@ const { handleErrorBadUrl,
   handleSequlErrors,
   handleCustomErrors,
 } = require("./controllers/error.controller");
-const { getUsers } = require("../Leopold-NC-News/controllers/user.controller");
+const { getUsers } = require("./controllers/user.controller");
 const {getArticleById, getArticles, getArticleComments, postCommentbyArticleId, patchArticleById,} = require("./controllers/articles.controller");
 const { getEndpoints } = require("./controllers/endpoint.controller")
 const {
