@@ -147,11 +147,14 @@ describe("/api/articles/:article_id/comments", () => {
         });
       });
   });
-  test('GET 200   | Return empty array when given article_id with no comments', () => {
-    return request(app).get('/api/articles/2/comments').expect(200).then(({body}) => {
-        expect(body.length).toBe(0)
-    })
-});
+  test("GET 200   | Return empty array when given article_id with no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(0);
+      });
+  });
   test("GET 200   | Return the array ordered by most recent comments first", () => {
     return request(app)
       .get("/api/articles/3/comments")
@@ -177,7 +180,6 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
-
 
 describe("POST", () => {
   test("201: creates new comment and responds with newly created comment from table", () => {
@@ -222,7 +224,7 @@ describe("POST", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
-  test('400: responds with the correct error message when the input body is missing information', ()=> {
+  test("400: responds with the correct error message when the input body is missing information", () => {
     return request(app)
       .post("/api/articles/3/comments")
       .send({ body: "A whacky good read" })
@@ -230,7 +232,7 @@ describe("POST", () => {
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
       });
-  })
+  });
 });
 test("200: responds with newly created comment when additional not needed infomation is added to the right request body", () => {
   return request(app)
@@ -273,7 +275,7 @@ describe("PATCH", () => {
         });
       });
   });
-  test("400: responds with appropriate error message when article id isan  invalid thingy magigy " , () => {
+  test("400: responds with appropriate error message when article id isan  invalid thingy magigy ", () => {
     return request(app)
       .patch("/api/articles/tree")
       .send({ inc_votes: 1 })
@@ -344,7 +346,7 @@ describe("/api/comments/:comment_id", () => {
         });
     });
   });
-  describe("DELETE", () => {
+  describe("DELETE Request thingy", () => {
     test("204: deletes comment by given comment id", () => {
       return request(app)
         .delete("/api/comments/3")
@@ -364,12 +366,31 @@ describe("/api/comments/:comment_id", () => {
           expect(response.body.msg).toBe("Bad request");
         });
     });
-    test("404: responds with appropriate error message when comment id does not exist", () => {
+    test("404: responds with appropriate error message when comment id does not cracker lacking exist", () => {
       return request(app)
         .delete("/api/comments/1231212")
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe("Comment id does not exist");
+        });
+    });
+  });
+});
+
+describe("/api/users", () => {
+  describe("GET", () => {
+    test("200: responds with the array of the users with right username, name, and avatar_url properties", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((response) => {
+          const { users } = response.body;
+          expect(users.length).toBe(4);
+          users.forEach((user) => {
+            expect(user).toHaveProperty("username");
+            expect(user).toHaveProperty("name");
+            expect(user).toHaveProperty("avatar_url");
+          });
         });
     });
   });

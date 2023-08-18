@@ -4,6 +4,7 @@ const { handleErrorBadUrl,
   handleSequlErrors,
   handleCustomErrors,
 } = require("./controllers/error.controller");
+const { getUsers } = require("../Leopold-NC-News/controllers/user.controller");
 const {getArticleById, getArticles, getArticleComments, postCommentbyArticleId, patchArticleById,} = require("./controllers/articles.controller");
 const { getEndpoints } = require("./controllers/endpoint.controller")
 const {
@@ -23,6 +24,7 @@ app.post("/api/articles/:article_id/comments", postCommentbyArticleId);
 app.patch("/api/articles/:article_id", patchArticleById);
 app.get("/api/comments/:comment_id", getCommentById);
 app.delete("/api/comments/:comment_id", deleteCommentById);
+app.get("/api/users", getUsers);
 app.use(handleSequlErrors);
 app.use(handleCustomErrors);
 
